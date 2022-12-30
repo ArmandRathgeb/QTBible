@@ -13,11 +13,13 @@
 #include <QRegularExpression>
 #include <QDockWidget>
 #include <QVBoxLayout>
+#include <QGridLayout>
 #include <QTabWidget>
 #include <QTextEdit>
 #include <QMenuBar>
 #include <QPushButton>
 #include <QDialogButtonBox>
+#include <QComboBox>
 #include <QToolBar>
 #include <QShortcut>
 #include <QSettings>

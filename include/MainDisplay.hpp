@@ -5,6 +5,7 @@
 #include <QToolBar>
 #include <QVector>
 #include <QDockWidget>
+#include "Tools/Bible.hpp"
 #include "Widgets/ToolPane.hpp"
 #include "Widgets/TextPane.hpp"
 #include "Network/Download.hpp"
@@ -32,7 +33,7 @@ private:
     void writeSettings();
 
     Network::Download down;
-    QVector<QString> version_descriptions;
+    QVector<Tools::Bible> bibles_;
     QSettings settings_;
     QAction* settings_menu;
     QAction* showMenu;

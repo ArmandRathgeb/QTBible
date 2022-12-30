@@ -18,6 +18,16 @@ Bible::Bible(QString name,
 
 }
 
+Bible::Bible(const Bible& b)
+    : name_{b.name_}
+    , id_{b.id_}
+    , abbreviation_{b.abbreviation_}
+    , description_{b.abbreviation_}
+    , language_{b.language_}
+{
+
+}
+
 Bible& Bible::operator=(const Bible& b) {
     name_           = b.name_;
     id_             = b.id_;
@@ -26,4 +36,8 @@ Bible& Bible::operator=(const Bible& b) {
     language_       = b.language_;
 
     return *this;
+}
+
+bool Bible::operator<(const Bible& b) {
+    return QString::compare(abbreviation_, b.abbreviation_, Qt::CaseInsensitive) < 0;
 }

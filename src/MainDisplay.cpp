@@ -106,28 +106,28 @@ void MainDisplay::loadVersions() {
 }
 
 void MainDisplay::readVersionsFromJson(const QJsonDocument& doc) {
-    const auto obj = doc.object();
-    if (!obj.contains("title") || !obj.contains("description")) {
-#ifdef NDEBUG
-        qFatal("Versions malformed");
-#else
-        qWarning() << "Versions malformed";
-        return;
-#endif
+    qDebug() << "Started parsing versions";
+    for (const auto& value : doc.object()["data"].toArray()) {
+        const auto& obj = value.toObject();
+        bibles_.push_back({
+            obj["name"].toString(),
+            obj["id"].toString(),
+            obj["abbreviation"].toString(),
+            obj["description"].toString(),
+            obj["language"].toString()
+        });
     }
-    auto titles = obj["title"].toArray();
-    auto descriptions = obj["description"].toArray();
-    version_descriptions.clear();
-    version_descriptions.reserve(descriptions.size());
-
-    assert(titles.size() == descriptions.size());
-    for (int i = 0; i < titles.size(); ++i) {
-        version_descriptions[i] = std::move(descriptions[i].toString());
+    std::sort(bibles_.begin(), bibles_.end());
+    for (const auto& bible : bibles_) {
+        tools_->insertVersion(bible.abbreviation().toUpper());
     }
+    qDebug() << "Parsed " << bibles_.size() << " versions";
 }
 
 void MainDisplay::writeVersions() {
+    for (const auto& bible : bibles_) {
 
+    }
 }
 
 void MainDisplay::loadSettings() {

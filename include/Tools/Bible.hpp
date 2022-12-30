@@ -15,7 +15,11 @@ namespace Tools {
               QString description,
               QString language);
 
+        Bible(const Bible& b);
+
         Bible& operator=(const Bible& b);
+
+        bool operator<(const Bible& b);
 
         [[nodiscard]] auto name()           const { return name_; }
         [[nodiscard]] auto id()             const { return id_; }
