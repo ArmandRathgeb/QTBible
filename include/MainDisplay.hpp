@@ -8,7 +8,7 @@
 #include "Tools/Bible.hpp"
 #include "Widgets/ToolPane.hpp"
 #include "Widgets/TextPane.hpp"
-#include "Network/Download.hpp"
+#include "Utils/Download.hpp"
 
 class MainDisplay : public KDDockWidgets::MainWindow {
 Q_OBJECT
@@ -28,11 +28,11 @@ private:
     void createShortcuts();
     void loadVersions();
     void readVersionsFromJson(const QJsonDocument& doc);
-    void writeVersions();
     void loadSettings();
     void writeSettings();
+    void addNewText();
 
-    Network::Download down;
+    Utils::Download* down;
     QVector<Tools::Bible> bibles_;
     QSettings settings_;
     QAction* settings_menu;

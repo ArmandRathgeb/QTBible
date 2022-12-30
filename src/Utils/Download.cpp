@@ -1,15 +1,30 @@
 #include "pch.hpp"
 
-#include "Network/Download.hpp"
+#include "Utils/Download.hpp"
 
-using namespace Network;
+using namespace Utils;
 
-Download::Download(const QUrl& name, QObject* parent)
+Download::Download(QObject* parent)
     : QObject(parent)
 {
-    QNetworkRequest request{name};
+    setupConnections();
+}
+
+
+Download::Download(const QUrl& url, QObject* parent)
+    : QObject(parent)
+{
+    setupConnections();
+    startDownload(url);
+}
+
+void Download::startDownload(const QUrl& url) {
+    QNetworkRequest request{url};
     request.setRawHeader("api-key", API_KEY);
     webctrl_.get(request);
+}
+
+void Download::setupConnections() {
     connect(
             &webctrl_,
             &QNetworkAccessManager::finished,

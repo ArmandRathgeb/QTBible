@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include "Utils/Download.hpp"
 
 namespace Tools {
 
@@ -27,12 +28,23 @@ namespace Tools {
         [[nodiscard]] auto description()    const { return description_; }
         [[nodiscard]] auto language()       const { return language_; }
 
+    public slots:
+        void getVerse(const QString& verseID);
+        //void getBooks();
+
+    signals:
+        void verse(const QString& verse);
+        void books(const QStringList& books);
+
     private:
+        void setupConnections();
+
         QString name_;
         QString id_;
         QString abbreviation_;
         QString description_;
         QString language_;
+        Utils::Download* download_;
     };
 
 } // Tools

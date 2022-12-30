@@ -1,24 +1,24 @@
 #include "pch.hpp"
 
 #include "Dialogs/Settings.hpp"
-#include "Network/Download.hpp"
+#include "Utils/Download.hpp"
+#include "Utils/Utils.hpp"
 #include "Tools/WordChart.hpp"
 #include "Widgets/TextPane.hpp"
 #include "MainDisplay.hpp"
 
 MainDisplay::MainDisplay()
     : kdd::MainWindow("QTBible", kdd::MainWindowOption_HasCentralFrame)
-    , down(QUrl(VERSION_HEADER), this)
+    , down(new Utils::Download(QUrl(VERSION_HEADER), this))
     , settings_()
     , toolbar(nullptr)
     , showMenu(nullptr)
     , quit(nullptr)
     , settings_menu(nullptr)
 {
-    QMainWindow::showMaximized();
-    QMainWindow::setWindowTitle("QTBible");
+    kdd::MainWindow::showMaximized();
 
-    qDebug() << "Loading";
+    qDebug() << "Loading...";
     createMenus();
     createToolbars();
     createShortcuts();
@@ -36,7 +36,6 @@ MainDisplay::MainDisplay()
 
 MainDisplay::~MainDisplay() {
     writeSettings();
-    writeVersions();
 }
 
 void MainDisplay::showSettings() {
@@ -74,35 +73,20 @@ void MainDisplay::createToolbars() {
 }
 
 void MainDisplay::createShortcuts() {
-    using QSS = QShortcut;
+    using QSC = QShortcut;
     using QKS = QKeySequence;
-    connect(new QSS(QKS("CTRL+Q"), this), &QShortcut::activated, qApp, &QApplication::quit);
-    connect(new QSS(QKS("CTRL+ALT+S"), this), &QShortcut::activated, this, &MainDisplay::showSettings);
+    connect(new QSC(QKS("CTRL+Q"), this), &QShortcut::activated, qApp, &QApplication::quit);
+    connect(new QSC(QKS("CTRL+ALT+S"), this), &QShortcut::activated, this, &MainDisplay::showSettings);
+    connect(new QSC(QKS("CTRL+T"), this), &QShortcut::activated, this, &MainDisplay::addNewText);
 }
 
 void MainDisplay::loadVersions() {
-    auto versions_file = QFile(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + VERSIONS_FILE);
-    if (versions_file.exists()) {
-        versions_file.open(QIODevice::ReadOnly | QIODevice::Text);
-        QByteArray data = versions_file.readAll();
-        readVersionsFromJson(QJsonDocument::fromJson(data));
-    } else {
-        connect(
-                &down,
-                &Network::Download::downloaded,
-                [&] {
-                    QJsonDocument doc = QJsonDocument::fromJson(down.getData());
-                    readVersionsFromJson(doc);
-                }
-        );
-        connect(
-                &down,
-                &Network::Download::error,
-                [&] {
-                    qWarning() << "Failed to get versions!";
-                }
-        );
-    }
+    connect(down, &Utils::Download::downloaded, [&] {
+        readVersionsFromJson(QJsonDocument::fromJson(down->getData()));
+    });
+    connect(down, &Utils::Download::error, [] {
+        qFatal("Failed to get versions. Check your internet connection");
+    });
 }
 
 void MainDisplay::readVersionsFromJson(const QJsonDocument& doc) {
@@ -121,13 +105,10 @@ void MainDisplay::readVersionsFromJson(const QJsonDocument& doc) {
     for (const auto& bible : bibles_) {
         tools_->insertVersion(bible.abbreviation().toUpper());
     }
-    qDebug() << "Parsed " << bibles_.size() << " versions";
-}
-
-void MainDisplay::writeVersions() {
-    for (const auto& bible : bibles_) {
-
+    if (bibles_.isEmpty()) {
+        qFatal("Error occurred getting versions!");
     }
+    qDebug() << "Parsed " << bibles_.size() << " versions";
 }
 
 void MainDisplay::loadSettings() {
@@ -149,4 +130,12 @@ void MainDisplay::keyReleaseEvent(QKeyEvent* evt) {
     }
 }
 #endif
+
+void MainDisplay::addNewText() {
+    if (!bibles_.isEmpty()) {
+        open_texts.push_back(new TextPane(bibles_.front().name()));
+        addDockWidget(open_texts.back(), kdd::Location_OnLeft);
+        addDockWidgetAsTab(open_texts.back());
+    }
+}
 

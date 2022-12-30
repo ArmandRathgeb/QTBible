@@ -6,22 +6,27 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-namespace Network {
+namespace Utils {
 
     class Download final : public QObject {
     Q_OBJECT
     public:
-        explicit Download(const QUrl& name, QObject* parent = nullptr);
+        Download(QObject* parent = nullptr);
 
-        ~Download() override = default;
+        explicit Download(const QUrl& url, QObject* parent = nullptr);
 
         [[nodiscard]] inline auto getData() const { return data_; }
+
+    public slots:
+        void startDownload(const QUrl& url);
 
     signals:
         void downloaded();
         void error();
 
     private:
+        void setupConnections();
+
         QNetworkAccessManager webctrl_;
         QByteArray data_;
     };

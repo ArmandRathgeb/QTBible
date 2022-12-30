@@ -23,9 +23,9 @@ add_executable(QTBible src/main.cpp
         include/Tools/WordChart.hpp
         src/MainDisplay.cpp
         include/MainDisplay.hpp
-        src/Network/Download.cpp
-        include/Network/Download.hpp
-        src/Dialogs/Settings.cpp include/Dialogs/Settings.hpp src/Widgets/TextPane.cpp include/Widgets/TextPane.hpp src/Tools/Bible.cpp include/Tools/Bible.hpp src/Widgets/ToolPane.cpp include/Widgets/ToolPane.hpp)
+        src/Utils/Download.cpp
+        include/Utils/Download.hpp
+        src/Dialogs/Settings.cpp include/Dialogs/Settings.hpp src/Widgets/TextPane.cpp include/Widgets/TextPane.hpp src/Tools/Bible.cpp include/Tools/Bible.hpp src/Widgets/ToolPane.cpp include/Widgets/ToolPane.hpp include/Utils/Utils.hpp)
 
 configure_file(include/config.h.in config.hpp)
 
