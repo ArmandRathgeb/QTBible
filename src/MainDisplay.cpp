@@ -25,13 +25,6 @@ MainDisplay::MainDisplay()
     loadVersions();
     loadSettings();
 
-    {
-        auto tx = new TextPane(tr("ASV"));
-        addDockWidget(tx, kdd::Location_OnLeft);
-        tools_ = new ToolPane();
-        addDockWidget(tools_, kdd::Location_OnRight);
-        addDockWidgetAsTab(tx);
-    }
 }
 
 MainDisplay::~MainDisplay() {
@@ -102,13 +95,11 @@ void MainDisplay::readVersionsFromJson(const QJsonDocument& doc) {
         });
     }
     std::sort(bibles_.begin(), bibles_.end());
-    for (const auto& bible : bibles_) {
-        tools_->insertVersion(bible.abbreviation().toUpper());
-    }
     if (bibles_.isEmpty()) {
         qFatal("Error occurred getting versions!");
     }
     qDebug() << "Parsed " << bibles_.size() << " versions";
+    addNewText();
 }
 
 void MainDisplay::loadSettings() {
@@ -133,7 +124,7 @@ void MainDisplay::keyReleaseEvent(QKeyEvent* evt) {
 
 void MainDisplay::addNewText() {
     if (!bibles_.isEmpty()) {
-        open_texts.push_back(new TextPane(bibles_.front().name()));
+        open_texts.push_back(new TextPane(bibles_.front().name(), bibles_));
         addDockWidget(open_texts.back(), kdd::Location_OnLeft);
         addDockWidgetAsTab(open_texts.back());
     }

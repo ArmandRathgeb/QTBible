@@ -18,14 +18,31 @@ find_package(Qt5 COMPONENTS
 find_package(Qt5Charts REQUIRED)
 find_package(KDDockWidgets REQUIRED)
 
-add_executable(QTBible src/main.cpp
-        src/Tools/WordChart.cpp
-        include/Tools/WordChart.hpp
-        src/MainDisplay.cpp
+set(HEADER_FILES
         include/MainDisplay.hpp
-        src/Utils/Download.cpp
+        include/Tools/WordChart.hpp
         include/Utils/Download.hpp
-        src/Dialogs/Settings.cpp include/Dialogs/Settings.hpp src/Widgets/TextPane.cpp include/Widgets/TextPane.hpp src/Tools/Bible.cpp include/Tools/Bible.hpp src/Widgets/ToolPane.cpp include/Widgets/ToolPane.hpp include/Utils/Utils.hpp)
+        include/Dialogs/Settings.hpp
+        include/Widgets/TextPane.hpp
+        include/Tools/Bible.hpp
+        include/Utils/Utils.hpp
+        )
+
+set(SRC_FILES
+        src/main.cpp
+        src/MainDisplay.cpp
+        src/Tools/WordChart.cpp
+        src/Utils/Download.cpp
+        src/Dialogs/Settings.cpp
+        src/Widgets/TextPane.cpp
+        src/Tools/Bible.cpp
+        )
+
+add_executable(QTBible
+        ${SRC_FILES}
+        ${HEADER_FILES}
+        )
+
 
 configure_file(include/config.h.in config.hpp)
 

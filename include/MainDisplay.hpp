@@ -6,7 +6,6 @@
 #include <QVector>
 #include <QDockWidget>
 #include "Tools/Bible.hpp"
-#include "Widgets/ToolPane.hpp"
 #include "Widgets/TextPane.hpp"
 #include "Utils/Download.hpp"
 
@@ -40,7 +39,6 @@ private:
     QAction* quit;
     QToolBar* toolbar;
     QVector<TextPane*> open_texts;
-    ToolPane* tools_;
 };
 
 

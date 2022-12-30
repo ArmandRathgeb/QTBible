@@ -1,17 +1,21 @@
 #include "pch.hpp"
 
+#include "Tools/Bible.hpp"
 #include "Tools/WordChart.hpp"
 #include "Widgets/TextPane.hpp"
 
-TextPane::TextPane(const QString& title)
+TextPane::TextPane(const QString& title, const QVector<Tools::Bible>& bibles)
     : kdd::DockWidget(title)
+    , bibles_(bibles)
 {
-    text = new QTextEdit(this);
-    text->setReadOnly(true);
-    text->setContextMenuPolicy(Qt::CustomContextMenu);
-    setWidget(text);
-    text->setText("<b>ARG</b>,  kys;!kys");
-    connect(text, &QTextEdit::customContextMenuRequested, this, &TextPane::createContextMenu);
+    setupToolbar();
+    setupTextArea();
+    toggleAction();
+    /*
+    connect(new QShortcut(QKeySequence(Qt::MouseButton::MiddleButton), titleBar()), &QShortcut::activated,
+            this, &kdd::DockWidget::close
+            );
+            */
 }
 
 void TextPane::createContextMenu(const QPoint& pnt) {
@@ -24,4 +28,28 @@ void TextPane::createContextMenu(const QPoint& pnt) {
     menu->addAction(&word_count);
 
     menu->exec(mapToGlobal(pnt));
+}
+
+void TextPane::setupToolbar() {
+    tools_ = new QToolBar("Tools");
+    versions_ = new QComboBox(tools_);
+    for (const auto& bible : bibles_) {
+        versions_->addItem(bible.abbreviation().toUpper());
+    }
+    connect(versions_, SIGNAL(currentIndexChanged(int)), this, SLOT(switchVersions(int)));
+    tools_->addWidget(versions_);
+
+    layout()->addWidget(tools_);
+}
+
+void TextPane::setupTextArea() {
+    text = new QTextEdit(this);
+    text->setReadOnly(true);
+    text->setContextMenuPolicy(Qt::CustomContextMenu);
+    layout()->addWidget(text);
+    connect(text, &QTextEdit::customContextMenuRequested, this, &TextPane::createContextMenu);
+}
+
+void TextPane::switchVersions(int index) {
+    setTitle(bibles_[index].name());
 }
